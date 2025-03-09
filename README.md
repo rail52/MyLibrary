@@ -10,4 +10,5 @@
 - `./manage.py migrate ` for sqlite
 - `docker compose up -d`
 - `./manage.py migrate` for pgsql
-- 
+- `python manage.py runserver` start
+`
