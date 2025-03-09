@@ -6,5 +6,6 @@
 - `pip install -r requirements.txt`
 - `django-admin startproject DjangoProjectMyLibrary`
 - `python manage.py startapp web`
-- `./manage.py makemigrations`
-- `./manage.py migrate `
+- `./manage.py makemigrations` 
+- `./manage.py migrate ` for sqlite
+- `docker compose up -d`
