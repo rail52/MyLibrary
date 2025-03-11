@@ -11,6 +11,7 @@
         <a href="{% url 'auth' %}">Войти</a>
         {% else %}
         <a href="{% url 'main' %}">Книги</a>
+        <a href="{% url 'add' %}">Добавить</a>
         <a href="{% url 'logout' %}">Выйти</a>
         {% endif %}
     </nav>

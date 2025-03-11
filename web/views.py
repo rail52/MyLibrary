@@ -4,20 +4,10 @@ from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from web.forms import RegistrationForm, AuthForm
-from .models import Book
+from web.forms import RegistrationForm, AuthForm, AddForm
+from .models import Book, Author
 
 User = get_user_model()
-
-@login_required
-def main_view(request):
-    books = Book.objects.filter(user=request.user)
-    return render(request, "web/main.html", {
-        "books": books,
-        "user": request.user
-    })
-
-
 
 def registration_view(request):
     form = RegistrationForm()
@@ -34,6 +24,16 @@ def registration_view(request):
             is_success = True
     return render(request, "web/registration.html", {
         "form": form, "is_success": is_success
+    })
+
+
+
+@login_required
+def main_view(request):
+    books = Book.objects.filter(user=request.user)
+    return render(request, "web/main.html", {
+        "books": books,
+        "user": request.user
     })
 
 
@@ -54,3 +54,29 @@ def auth_view(request):
 def logout_view(request):
     logout(request)
     return redirect("main")
+
+
+@login_required
+def add_view(request):
+    if request.method == 'POST':
+        form = AddForm(request.POST)
+        if form.is_valid():
+            # Создаем книгу и привязываем её к текущему пользователю
+            book = Book.objects.create(
+                title=form.cleaned_data['title'],
+                user=request.user
+            )
+            # Создаем или находим автора
+            author_name = form.cleaned_data['author_name']
+            author, created = Author.objects.get_or_create(name=author_name)
+            # Связываем книгу с автором
+            book.author_set.add(author)
+            return redirect('main')  # Перенаправляем на страницу со списком книг
+    else:
+        # Если это GET-запрос, создаем пустую форму
+        form = AddForm()
+
+        # Передаем форму в шаблон
+    return render(request, 'web/add.html', {
+        'form': form
+    })

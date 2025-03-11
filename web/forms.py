@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-
+from .models import Book
 User = get_user_model()
 
 
@@ -21,3 +21,7 @@ class RegistrationForm(forms.ModelForm):
 class AuthForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
+
+class AddForm(forms.Form):
+    title = forms.CharField(max_length=64, label="Book Title")  # Поле для названия книги
+    author_name = forms.CharField(max_length=64, label="Author's Name")
