@@ -4,18 +4,18 @@
     <title>MyLibrary</title>
 </head>
 <body>
-    <h1>My Library</h1>
-    <nav>
-        {% if user.is_anonymous %}
-        <a href="{% url 'registration' %}">Регистрация</a>
-        <a href="{% url 'auth' %}">Войти</a>
-        {% else %}
-        <a href="{% url 'main' %}">Книги</a>
-        <a href="{% url 'add' %}">Добавить</a>
-        <a href="{% url 'logout' %}">Выйти</a>
-        {% endif %}
-    </nav>
-    <hr>
-    {% block content %}{% endblock %}
+<h1>My Library</h1>
+<nav>
+    {% if user.is_anonymous %}
+    <a href="{% url 'registration' %}">Регистрация</a>
+    <a href="{% url 'auth' %}">Войти</a>
+    {% else %}
+    <a href="{% url 'main' %}">Книги</a>
+    <a href="{% url 'add' %}">Добавить</a>
+    <a href="{% url 'logout' %}">Выйти</a>
+    {% endif %}
+</nav>
+<hr>
+{% block content %}{% endblock %}
 </body>
 </html>

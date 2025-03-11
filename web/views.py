@@ -1,13 +1,13 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from web.forms import RegistrationForm, AuthForm, AddBookForm, EditBookForm
 from .models import Book, Author
 
 User = get_user_model()
+
 
 def registration_view(request):
     form = RegistrationForm()
@@ -25,7 +25,6 @@ def registration_view(request):
     return render(request, "web/registration.html", {
         "form": form, "is_success": is_success
     })
-
 
 
 @login_required
