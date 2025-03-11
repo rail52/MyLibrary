@@ -1,18 +1,24 @@
 {% extends 'web/base.html' %}
 {% block content %}
-    {% if user %}
-        <p>Вы авторизованы как <b>{{ user.username }}</b></p>
-        <h2>Ваши книги:</h2>
-        <ul>
-            {% if books %}
-                {% for book in books %}
-                    <li>{{ book.title }}</li>
-                {% endfor %}
-            {% else %}
-                <li>У вас пока нет книг.</li>
-            {% endif %}
-        </ul>
-    {% else %}
-        <h1>Войдите или зарегистрируйтесь</h1>
-    {% endif %}
+{% if user %}
+<p>Вы авторизованы как <b>{{ user.username }}</b></p>
+<h2>Ваши книги:</h2>
+<ul>
+    {% for book in books %}
+    <li>
+        <strong>{{ book.title }}</strong>
+        -{% for author in book.author_set.all %}
+        {{ author.name }}
+        {% endfor %}
+        <a href="{% url 'edit' book.id %}">Изменить</a>
+        <form action="{% url 'delete' book.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить эту книгу?')">Удалить</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<h1>Войдите или зарегистрируйтесь</h1>
+{% endif %}
 {% endblock %}
