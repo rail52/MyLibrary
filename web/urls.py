@@ -6,5 +6,6 @@ urlpatterns = [
     path("registration/", registration_view, name="registration"),
     path("auth/", auth_view, name="auth"),
     path("logout/", logout_view, name="logout"),
-    path("add/", add_view, name="add" )
+    path("add/", add_view, name="add"),
+    path('delete/<int:book_id>/', delete_view, name='delete'),
 ]

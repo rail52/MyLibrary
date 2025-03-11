@@ -2,7 +2,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from web.forms import RegistrationForm, AuthForm, AddForm
 from .models import Book, Author
@@ -80,3 +80,13 @@ def add_view(request):
     return render(request, 'web/add.html', {
         'form': form
     })
+
+
+@login_required
+def delete_view(request, book_id):
+    # Находим книгу по ID и проверяем, что она принадлежит текущему пользователю
+    book = get_object_or_404(Book, id=book_id, user=request.user)
+    # Удаляем книгу
+    book.delete()
+    # Перенаправляем на страницу со списком книг
+    return redirect('main')

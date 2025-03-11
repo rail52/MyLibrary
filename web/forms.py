@@ -23,5 +23,5 @@ class AuthForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput())
 
 class AddForm(forms.Form):
-    title = forms.CharField(max_length=64, label="Book Title")  # Поле для названия книги
-    author_name = forms.CharField(max_length=64, label="Author's Name")
+    title = forms.CharField(max_length=64, label="Название книги")  # Поле для названия книги
+    author_name = forms.CharField(max_length=64, label="Автор")
