@@ -10,6 +10,7 @@
         -{% for author in book.author_set.all %}
         {{ author.name }}
         {% endfor %}
+        <a href="{% url 'edit' book.id %}">Изменить</a>
         <form action="{% url 'delete' book.id %}" method="post" style="display: inline;">
             {% csrf_token %}
             <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить эту книгу?')">Удалить</button>

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from web.forms import RegistrationForm, AuthForm, AddForm
+from web.forms import RegistrationForm, AuthForm, AddBookForm, EditBookForm
 from .models import Book, Author
 
 User = get_user_model()
@@ -59,7 +59,7 @@ def logout_view(request):
 @login_required
 def add_view(request):
     if request.method == 'POST':
-        form = AddForm(request.POST)
+        form = AddBookForm(request.POST)
         if form.is_valid():
             # Создаем книгу и привязываем её к текущему пользователю
             book = Book.objects.create(
@@ -74,7 +74,7 @@ def add_view(request):
             return redirect('main')  # Перенаправляем на страницу со списком книг
     else:
         # Если это GET-запрос, создаем пустую форму
-        form = AddForm()
+        form = AddBookForm()
 
         # Передаем форму в шаблон
     return render(request, 'web/add.html', {
@@ -90,3 +90,36 @@ def delete_view(request, book_id):
     book.delete()
     # Перенаправляем на страницу со списком книг
     return redirect('main')
+
+
+@login_required
+def edit_view(request, book_id):
+    # Находим книгу по ID и проверяем, что она принадлежит текущему пользователю
+    book = get_object_or_404(Book, id=book_id, user=request.user)
+
+    if request.method == 'POST':
+        # Если форма отправлена, обрабатываем данные
+        form = EditBookForm(request.POST, instance=book)
+
+        if form.is_valid():
+            # Обновляем книгу
+            book = form.save(commit=False)
+            book.user = request.user  # Привязываем книгу к текущему пользователю
+            book.save()
+
+            # Обновляем автора
+            author_name = form.cleaned_data['author_name']
+            author, created = Author.objects.get_or_create(name=author_name)
+            book.author_set.clear()  # Удаляем старых авторов
+            book.author_set.add(author)  # Добавляем нового автора
+
+            return redirect('main')  # Перенаправляем на страницу со списком книг
+    else:
+        # Если это GET-запрос, заполняем форму текущими данными
+        initial_data = {
+            'title': book.title,
+            'author_name': book.author_set.first().name if book.author_set.exists() else ''
+        }
+        form = EditBookForm(instance=book, initial=initial_data)
+
+    return render(request, 'web/edit.html', {'form': form, 'book': book})

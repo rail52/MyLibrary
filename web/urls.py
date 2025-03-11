@@ -8,4 +8,5 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
     path("add/", add_view, name="add"),
     path('delete/<int:book_id>/', delete_view, name='delete'),
+    path('edit/<int:book_id>/', edit_view, name='edit'),
 ]
