@@ -2,13 +2,28 @@
 {% block content %}
 {% if user %}
 <p>Вы авторизованы как <b>{{ user.username }}</b></p>
+
+<!-- Форма для поиска и фильтрации -->
+<form method="get" action="">
+    <label for="search_q">Поиск (название или автор):</label>
+    <input type="text" id="search_q" name="q" value="{{ search_query|default_if_none:'' }}" placeholder="Введите текст...">
+
+    <label for="author_filter">Фильтр по автору:</label>
+    <input type="text" id="author_filter" name="author" value="{{ author_filter|default_if_none:'' }}" placeholder="Автор...">
+
+    <button type="submit">Найти</button>
+</form>
+
+<hr>
+
 <h2>Ваши книги:</h2>
 <ul>
     {% for book in books %}
     <li>
         <strong>{{ book.title }}</strong>
-        -{% for author in book.author_set.all %}
-        {{ author.name }}
+        —
+        {% for author in book.author_set.all %}
+            {{ author.name }}{% if not forloop.last %}, {% endif %}
         {% endfor %}
         <a href="{% url 'edit' book.id %}">Изменить</a>
         <form action="{% url 'delete' book.id %}" method="post" style="display: inline;">
