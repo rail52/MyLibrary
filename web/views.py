@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from web.forms import RegistrationForm, AuthForm, AddBookForm, EditBookForm
@@ -29,10 +29,30 @@ def registration_view(request):
 
 @login_required
 def main_view(request):
+    # Забираем значения из GET-параметров
+    search_query = request.GET.get('q', '').strip()
+    author_filter = request.GET.get('author', '').strip()
+
+    # Базовый набор книг — только те, что принадлежат текущему пользователю
     books = Book.objects.filter(user=request.user)
+
+    # Если есть поисковый запрос, фильтруем по названию книги ИЛИ по имени автора
+    if search_query:
+        books = books.filter(
+            Q(title__icontains=search_query) |
+            Q(author__name__icontains=search_query)  # через связь M2M
+        ).distinct()
+
+    # Если пользователь выбрал фильтр по конкретному автору
+    if author_filter:
+        books = books.filter(author__name__icontains=author_filter).distinct()
+
     return render(request, "web/main.html", {
         "books": books,
-        "user": request.user
+        "user": request.user,
+        # Передаем текущие значения, чтобы отображать их в форме
+        "search_query": search_query,
+        "author_filter": author_filter,
     })
 
 
